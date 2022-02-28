@@ -1,6 +1,6 @@
 TEXTS = ['''
 Situated about 10 miles west of Kemmerer,
-Fossil Butte is a ruggedly impressive
+Fossil Butte is a ruggedly  ,,, impressive
 topographic feature that rises sharply
 some 1000 feet above Twin Creek Valley
 to an elevation of more than 7500 feet
@@ -23,12 +23,18 @@ are found in multiple limestone layers, which lie somepaddlefish,
 represent several varieties of perch, as well as
 other freshwater genera and herring similar to those
 in modern oceans. Other fish such as 
-garpike and stingray are also present.'''
+garpike and stingray are also present.''',
+'''Second, in some situations regression analysis can be 
+used to infer causal relationships between the independent 
+and dependent variables. Importantly, regressions by 
+themselves only reveal relationships between a dependent 
+variable and a collection of independent variables 
+in a fixed dataset.'''
 ]
 
-text_1 = TEXTS[0]
-text_2 = TEXTS[1]
-text_3 = TEXTS[2]
+import string
+text_count = len(TEXTS)
+text_ids = list(range(1,len(TEXTS)+1))
 
 # Usernames and passwords dictionary
 user_passwd_dict = {
@@ -37,8 +43,9 @@ user_passwd_dict = {
     'mike' : 'password123',
     'liz' : 'pass123'
 }
-
-# Set of all user names from dictionary
+#
+# Setting of all user names from dictionary
+#
 users = set(user_passwd_dict.keys())
 delimiter_1 = "-" * 60
 separator = "." * 4
@@ -46,8 +53,11 @@ separator = "." * 4
 print(delimiter_1)
 print('Dear user, please enter your username and password.')
 print(delimiter_1)
-username = input('username: ').lower()
 
+#
+# Login verification - Start
+#
+username = input('username: ').lower()
 if username in users:
     while (password := input("password: ")) != user_passwd_dict[username]:
         print("Password is wrong. Try it again!")
@@ -58,66 +68,131 @@ else:
     print(delimiter_1)
     print('Username does not exist! Program is quiting...')
     quit()
-
+#
+# Login verification - End
+#
+#
+# Text ID selection - Start
+#
 print(delimiter_1)
-print("We have got 3 texts to be analyzed:\n"
-      "(1)" + separator + "Text 1\n"
-      "(2)" + separator + "Text 2\n"
-      "(3)" + separator + "Text 3"
-      )
-index = int(input("Select text ID (1,2,3): ")) - 1
-print(delimiter_1)
+print(f"We have got {text_count} texts to be analyzed:\n")
+for i in text_ids:
+    print("(" + str(i) + ")" + separator + "Text " + str(i))
 
+entry_verification = True
+while entry_verification:
+    selected_text_id = input("Select text ID " + str(text_ids) +" :")
+    if selected_text_id.isnumeric() and int(selected_text_id) in text_ids:
+        print(f"You selected text nr. {selected_text_id}")
+        index = int(selected_text_id) - 1
+        entry_verification = False
+    else:
+        print("Wrong input is given. Please try it again.")
+
+#
+# Text ID selection - End
+#
+print(delimiter_1)
+#
+# Text Cleaning  - Start
+#
 list_of_words = TEXTS[index].split()
+clean_words = []
+punctuation = string.punctuation
+
+for word in list_of_words:
+    clean_word = ""
+    for letter in word:
+        if letter not in punctuation:
+            clean_word = clean_word + letter
+    if len(clean_word) > 0:
+        clean_words.append(clean_word)
+
+print(list_of_words)
+print(clean_words)
+#
+# Text Cleaning  - End
+#
 list_title = []
 list_upper = []
 list_lower = []
 list_num_str = []
-numbers =[]
 
-for word in list_of_words:
-    for i in range(len(word)):
-        if word[i].isdigit():
-            list_num_str.append(word)
-            break
-    if word.istitle() and word not in list_num_str:
+for word in clean_words:
+    if word.isnumeric():
+        list_num_str.append(word)
+    if word.istitle():
         list_title.append(word)
-    if word.isupper() and word not in list_num_str:
+    if word.isupper() and word.isalpha():
         list_upper.append(word)
-    if word.islower() and word not in list_num_str:
+    if word.islower():
         list_lower.append(word)
 
-for i in range(len(list_num_str)):
-    numbers.append(int(''.join([letter for letter in list_num_str[i] if letter.isdigit()])))
+print(delimiter_1)
+print(list_upper)
+print(list_num_str)
+print(list_lower)
+print(list_title)
+print(delimiter_1)
+#for i in range(len(list_num_str)):
+#    numbers.append(int(''.join([letter for letter in list_num_str[i] if letter.isdigit()])))
 
+#
+# Print Output - Start
+#
 print(
-f"There are {len(list_of_words)} words in the selected text.\n"
+f"There are {len(clean_words)} words in the selected text.\n"
 f"There are {len(list_title)} titlecase words.\n"
 f"There are {len(list_upper)} uppercase words.\n"
 f"There are {len(list_lower)} lowercase words.\n"
 f"There are {len(list_num_str)} numeric strings.\n"
-f"The sum of all the numbers {sum(numbers)}.")
+f"The sum of all the numbers {sum(map(int, list_num_str))}.")
 print(delimiter_1)
+#
+# Print Output - End
+#
+#
+# Print: Final Table of Occurrences - Start
+#
+title = "OCCURRENCE"
 
-word_range = range(1,16)
+max_word_length = 0
+for word in clean_words:
+    if len(word) > max_word_length:
+        max_word_length = len(word)
 
-word_len_dict = {}
+# Dictionary of word length occurrence
+word_range = range(1, (max_word_length+1))
+word_len_freq_dict = {}
 for key in word_range:
-    word_len_dict[key] = 0
+    word_len_freq_dict[key] = 0
 
-for word in list_of_words:
-    word_len_dict[len(word)] = word_len_dict[len(word)] + 1
+for word in clean_words:
+    word_len_freq_dict[len(word)] = word_len_freq_dict[len(word)] + 1
+max_frequency = max(word_len_freq_dict.values())
 
+# Width setting of the output table
+if max_frequency > len(title) and max_frequency % 2 == 0:
+    table_width = max_frequency
+elif max_frequency > len(title) and max_frequency % 2 == 1:
+    table_width = max_frequency + 1
+else:
+    table_width = len(title)
 
-print("LEN|" + " "*4 + "OCCURENCES" + " "*4 + "|NR.")
+title_spaces = int((table_width - len(title)) / 2)
+
+print("LEN|" + " " * title_spaces + title + " " * title_spaces + "|NR.")
 print(delimiter_1)
-for k in word_len_dict:
+for k in word_len_freq_dict:
     if k <= 9:
-        spacer = "*" * word_len_dict[k]
-        spaces = (18 - word_len_dict[k])*" "
-        print("  " + f"{k}|" + spacer + spaces + "|" + str(word_len_dict[k]))
+        bar = "*" * word_len_freq_dict[k]
+        spaces = (table_width - word_len_freq_dict[k])*" "
+        print("  " + f"{k}|" + bar + spaces + "|" + str(word_len_freq_dict[k]))
     else:
-        spacer = "*" * word_len_dict[k]
-        spaces = (18 - word_len_dict[k])*" "
-        print(" " + f"{k}|" + spacer + spaces + "|" + str(word_len_dict[k]))
+        bar = "*" * word_len_freq_dict[k]
+        spaces = (table_width - word_len_freq_dict[k])*" "
+        print(" " + f"{k}|" + bar + spaces + "|" + str(word_len_freq_dict[k]))
 print(delimiter_1)
+#
+# Print: Final Table of Occurrence - End
+#
