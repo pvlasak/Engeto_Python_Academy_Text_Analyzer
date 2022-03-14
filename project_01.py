@@ -1,48 +1,43 @@
-TEXTS = ['''
-Situated about 10 miles west of Kemmerer,
-Fossil Butte is a ruggedly  ,,, impressive
-topographic feature that rises sharply
-some 1000 feet above Twin Creek Valley
-to an elevation of more than 7500 feet
-above sea level. The butte is located just
-north of US 30N and the Union Pacific Railroad,
-which traverse the valley. ''',
-'''At the base of Fossil Butte are the bright
-red, purple, yellow and gray beds of the Wasatch
-Formation. Eroded portions of these horizontal
-beds slope gradually upward from the valley floor
-and steepen abruptly. Overlying them and extending
-to the top of the butte are the much steeper
-buff-to-white beds of the Green River Formation,
-which are about 300 feet thick.''',
-'''The monument contains 8198 acres and protects
-a portion of the largest deposit of freshwater fish
-fossils in the world. The richest fossil fish deposits
-are found in multiple limestone layers, which lie somepaddlefish,
-100 feet below the top of the butte. The fossils
-represent several varieties of perch, as well as
-other freshwater genera and herring similar to those
-in modern oceans. Other fish such as 
-garpike and stingray are also present.''',
-'''Second, in some situations regression analysis can be 
-used to infer causal relationships between the independent 
-and dependent variables. Importantly, regressions by 
-themselves only reveal relationships between a dependent 
-variable and a collection of independent variables 
-in a fixed dataset.'''
+from string import punctuation
+TEXTS = [
+     """Situated about 10 miles west of Kemmerer,
+        Fossil Butte is a ruggedly  ,,, impressive
+        topographic feature that rises sharply
+        some 1000 feet above Twin Creek Valley
+        to an elevation of more than 7500 feet
+        above sea level. The butte is located just
+        north of US 30N and the Union Pacific Railroad,
+        which traverse the valley. """,
+     """At the base of Fossil Butte are the bright
+        red, purple, yellow and gray beds of the Wasatch
+        Formation. Eroded portions of these horizontal
+        beds slope gradually upward from the valley floor
+        and steepen abruptly. Overlying them and extending
+        to the top of the butte are the much steeper
+        buff-to-white beds of the Green River Formation,
+        which are about 300 feet thick.""",
+     """The monument contains 8198 acres and protects
+        a portion of the largest deposit of freshwater fish
+        fossils in the world. The richest fossil fish deposits
+        are found in multiple limestone layers, which lie somepaddlefish,
+        100 feet below the top of the butte. The fossils
+        represent several varieties of perch, as well as
+        other freshwater genera and herring similar to those
+        in modern oceans. Other fish such as 
+        garpike and stingray are also present.""",
+     """Second, in some situations regression analysis can be 
+        used to infer causal relationships between the independent 
+        and dependent variables. Importantly, regressions by 
+        themselves only reveal relationships between a dependent 
+        variable and a collection of independent variables 
+        in a fixed dataset."""
 ]
 
-import string
 text_count = len(TEXTS)
-text_ids = list(range(1,len(TEXTS)+1))
+text_ids = list(range(1, len(TEXTS)+1))
 
 # Usernames and passwords dictionary
-user_passwd_dict = {
-    'bob' : '123',
-    'ann' : 'pass123',
-    'mike' : 'password123',
-    'liz' : 'pass123'
-}
+user_passwd_dict = {'bob': '123', 'ann': 'pass123', 'mike': 'password123', 'liz': 'pass123'}
 #
 # Setting of all user names from dictionary
 #
@@ -58,15 +53,17 @@ print(delimiter_1)
 # Login verification - Start
 #
 username = input('username: ').lower()
+password = input("password: ")
 if username in users:
-    while (password := input("password: ")) != user_passwd_dict[username]:
-        print("Password is wrong. Try it again!")
+    if password != user_passwd_dict[username]:
+        print("Wrong credentials.")
+        quit()
     else:
         print(delimiter_1)
         print(f"Welcome to Text Analyzer App, {username.title()}!!")
 else:
     print(delimiter_1)
-    print('Username does not exist! Program is quiting...')
+    print("Wrong credentials.")
     quit()
 #
 # Login verification - End
@@ -98,15 +95,12 @@ print(delimiter_1)
 #
 list_of_words = TEXTS[index].split()
 clean_words = []
-punctuation = string.punctuation
 
-for word in list_of_words:
-    clean_word = ""
-    for letter in word:
-        if letter not in punctuation:
-            clean_word = clean_word + letter
-    if len(clean_word) > 0:
-        clean_words.append(clean_word)
+clean_words = [
+    word.strip(punctuation) for word in list_of_words
+    if word.strip(punctuation)
+]
+
 
 print(list_of_words)
 print(clean_words)
@@ -193,6 +187,7 @@ for k in word_len_freq_dict:
         spaces = (table_width - word_len_freq_dict[k])*" "
         print(" " + f"{k}|" + bar + spaces + "|" + str(word_len_freq_dict[k]))
 print(delimiter_1)
+
 #
 # Print: Final Table of Occurrence - End
 #
